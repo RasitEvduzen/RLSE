@@ -36,7 +36,7 @@ for k=1:num_of_data
     plot(x_tr,y_tr,'r*') % Plot Original Data
     hold on, grid minor
     y_lse = model_evaluate(x_tr,x_lse);
-    plot(x_tr,y_lse,'b') % Plot Original Data
+    plot(x_tr,y_lse,'b') % Plot LSE Solution Data
     xline(0),yline(0)
     title("Linear Model Fitting via Batch Least Squares")
 
@@ -44,7 +44,7 @@ for k=1:num_of_data
     plot(x_tr,y_tr,'r*') % Plot Original Data
     hold on, grid minor
     y_lse = model_evaluate(x_tr,x_rlse);
-    plot(x_tr,y_lse,'b') % Plot Original Data
+    plot(x_tr,y_lse,'b') % Plot RLSE Solution Data
     xline(0),yline(0);
     title("Linear Model Fitting via Recursive Least Squares");
     display(["Number of iter: "+num2str(k); "Real Model Coeff: " + num2str(model_coeff'); "Batch LSE Coeff: " + num2str(x_lse'); "Recursive LSE Coeff: " + num2str(x_rlse')]);
