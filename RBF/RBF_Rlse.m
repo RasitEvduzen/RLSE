@@ -5,7 +5,6 @@ clc,clear all,close all;
 %% Create Data
 x_tr = (-3:5e-2:3)';
 num_of_data = size(x_tr,1);
-
 a1 = radbas(x_tr);
 a2 = radbas(x_tr-1.5);
 a3 = radbas(x_tr+2);
@@ -17,17 +16,17 @@ xconf = [x_tr' x_tr(end:-1:1)'];
 yconf = [y'+0.15 y(end:-1:1)'-0.15];
 
 
-% Create System matrix
-b = y_tr;
-A = [a1 a2 a3];
-model_oder = size(A,2);
 % Create LS and RLSE Model
+model_oder = 3;
 x_rlse = randn(model_oder,1);  % Random start RLSE state vector
 P = 1e2 * eye(model_oder,model_oder);
 
 figure('units','normalized','outerposition',[0 0 1 1],'color','w')
 for k=1:num_of_data
-    [x_rlse,K,P] = rlse_online(A(k,:),b(k,:),x_rlse,P);
+    A = [radbas(x_tr(k)) radbas(x_tr(k)-1.5) radbas(x_tr(k)+2)];  % Create Regressor Matrix
+    b = y_tr(k);  % Get Measurement
+
+    [x_rlse,K,P] = rlse_online(A,b,x_rlse,P);
     clf
     plot(x_tr,y_tr,'ro-',LineWidth=2.5) % Plot Original Data
     hold on, grid minor
@@ -35,7 +34,7 @@ for k=1:num_of_data
     plot(x_tr,y_rlse,'k',LineWidth=2) % Plot Original Data
     title("RBF Model Fittin via Recursive Least Squares")
     axis([-3 3 -.5 4])
-    fill(xconf,yconf,'red',FaceColor=[0 0.8 0],EdgeColor="none",FaceAlpha=.3);
+    fill(xconf,yconf,'red',FaceColor=[0 0 1],EdgeColor="none",FaceAlpha=.3);
     legend("Noisy Data","RLSE","Confidence Bounds")
     drawnow
 end
