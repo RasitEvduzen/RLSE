@@ -3,7 +3,6 @@ clc,clear,close all,warning off;
 % Written By: Rasit
 % 14-Apr-2024
 %% Create Data
-
 rbfFunc = @(x,y,cx,cy,gamma,weight) weight*exp(-((x-cx).^2+(y-cy).^2)/(2*gamma^2));
 
 NoD = 2e3;
@@ -19,6 +18,7 @@ z = 0;
 for i=1:ModelOrder
     z = z + rbfFunc(x,y,CenterX(i),CenterY(i),Gamma(i),Weight(i));
 end
+z = z + .25*rand(NoD,1);
 
 
 % Generate A matrix
@@ -38,7 +38,7 @@ for k=1:NoD
 
     clf
     scatter3(x,y,z,"k","filled"),hold on
-    view(k,25)
+    view(k/10,25)
     % Plot Fitted Function!
     Range = [-1 2];
     [X,Y]= meshgrid(linspace(Range(1),Range(2),1e2));
@@ -47,7 +47,7 @@ for k=1:NoD
     for i=1:ModelOrder
         Z = Z + rbfFunc(X,Y,CenterX(i),CenterY(i),Gamma(i),xrlse(i));
     end
-    surf(X,Y,Z,EdgeColor="none",FaceAlpha=.75),axis([Range(1) Range(2) Range(1) Range(2) -.5 max([Weight])])
+    surf(X,Y,Z,EdgeColor="none",FaceAlpha=.75),axis([Range(1) Range(2) Range(1) Range(2) -.5 3])
     drawnow
 end
 
