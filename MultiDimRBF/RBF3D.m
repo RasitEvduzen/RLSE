@@ -38,7 +38,7 @@ for k=1:NoD
 
     clf
     scatter3(x,y,z,"k","filled"),hold on
-    view(k/10,25)
+%     view(k/10,25)
     % Plot Fitted Function!
     Range = [-1 2];
     [X,Y]= meshgrid(linspace(Range(1),Range(2),1e2));
