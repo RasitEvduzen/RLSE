@@ -15,28 +15,30 @@ y_tr = y + .25*randn(num_of_data,1);  % Noisy Data
 xconf = [x_tr' x_tr(end:-1:1)'];
 yconf = [y'+0.15 y(end:-1:1)'-0.15];
 
-
 % Create LS and RLSE Model
 model_oder = 3;
 x_rlse = randn(model_oder,1);  % Random start RLSE state vector
-P = 1e6 * eye(model_oder,model_oder);    % covariance matrix
+P = 1e2 * eye(model_oder,model_oder);
+lambda_forgetting = .999;  % Forgetting factor Lambda = 1 equal RLSE, Lambda = 0 
 
 figure('units','normalized','outerposition',[0 0 1 1],'color','w')
 for k=1:num_of_data
     A = [radbas(x_tr(k)) radbas(x_tr(k)-1.5) radbas(x_tr(k)+2)];  % Create Regressor Matrix
     b = y_tr(k);  % Get Measurement
 
-    [x_rlse,K,P] = rlse_online(A,b,x_rlse,P);
+    [x_rlse,K,P] = rlse_online(A,b,x_rlse,P,lambda_forgetting);
+    if k == num_of_data
     clf
     plot(x_tr,y_tr,'ro-',LineWidth=2.5) % Plot Original Data
     hold on, grid minor
     y_rlse = model_evaluate(x_rlse,a1,a2,a3);
     plot(x_tr,y_rlse,'k',LineWidth=2) % Plot Original Data
-    title("RBF Model Fittin via Recursive Least Squares")
+    title("RBF Model Fitting via Recursive Least Squares")
     axis([-3 3 -.5 4])
     fill(xconf,yconf,'red',FaceColor=[0 0 1],EdgeColor="none",FaceAlpha=.3);
     legend("Noisy Data","RLSE","Confidence Bounds")
     drawnow
+    end
 end
 
 function [y] = model_evaluate(model_param,a1,a2,a3)
@@ -44,11 +46,16 @@ y = model_param(1)*a1 + model_param(2)*a2 + model_param(3)*a3;
 end
 
 
-function [x,K,P] = rlse_online(a_k,b_k,x,P)
-% One step of RLSE (Recursive Least Squares Estimation) algorithm
+function [x,K,P] = rlse_online(a_k,b_k,x,P,lambda)
+% One step of RLSE (Recursive Least Squares Estimation) algorithm with forgetting factor
 a_k = a_k(:);
 b_k = b_k(:);
-K = (P*a_k)/(a_k'*P*a_k+1); % Compute Gain K (Like Kalman Gain!)
-x = x + K*(b_k-a_k'*x);     % State Update
-P = P - K*a_k'*P;           % Covariance Update
+K = (P*a_k)/(lambda + a_k'*P*a_k); % Compute Gain K (With Forgetting Factor)
+x = x + K*(b_k-a_k'*x);           % State Update
+P = (P - K*a_k'*P) / lambda;      % Covariance Update
 end
+
+
+
+
+
