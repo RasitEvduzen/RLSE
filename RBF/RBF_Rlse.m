@@ -19,7 +19,7 @@ yconf = [y'+0.15 y(end:-1:1)'-0.15];
 % Create LS and RLSE Model
 model_oder = 3;
 x_rlse = randn(model_oder,1);  % Random start RLSE state vector
-P = 1e6 * eye(model_oder,model_oder);    % covariance matrix
+P = 1e2 * eye(model_oder,model_oder);    % covariance matrix
 
 figure('units','normalized','outerposition',[0 0 1 1],'color','w')
 for k=1:num_of_data
